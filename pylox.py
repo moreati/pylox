@@ -185,6 +185,7 @@ def run_file(path: str):
     if errors:
         sys.exit(65)
 
+
 def run_prompt():
     while True:
         run(input('> '))
