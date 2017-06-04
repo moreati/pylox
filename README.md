@@ -11,7 +11,8 @@ It is *learning in progress*. I'm merely translating Java snippets to Python
 It has a C-like syntax, dynamic typing, automatic memory management, first
 class functions, closures, and class-based object orientation.
 
-The standand library contains a single function: `clock()`
+The standand library contains a single function: `clock()`. Code examples
+tend to be breakfast themed.
 
 [bob nystrom]: http://stuffwithstuff.com/
 [crafting interpreters]: http://craftinginterpreters.com/
