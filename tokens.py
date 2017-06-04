@@ -62,3 +62,6 @@ class Token:
     def __str__(self):
         return '%s %s %s' % (self.type, self.lexeme, self.literal)
 
+    def __repr__(self):
+        args = f'{self.type}, {self.type}, {self.lexeme}, {self.line}'
+        return f'{self.__class__.__name__}({args})'
