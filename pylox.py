@@ -204,7 +204,7 @@ def run(source: str):
     if errors:
         return errors
 
-    print(AstPrinter.print(expression))
+    print(AstPrinter().print(expression))
 
 
 def main(argv: list):
