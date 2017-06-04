@@ -14,6 +14,13 @@ class functions, closures, and class-based object orientation.
 The standand library contains a single function: `clock()`. Code examples
 tend to be breakfast themed.
 
+Crafting Interpreters includes 2 implementations of Lox: [jlox] & [clox].
+Readers have also implmented various other [lox implementations].
+
 [bob nystrom]: http://stuffwithstuff.com/
+[clox]: https://github.com/munificent/craftinginterpreters/tree/master/c
 [crafting interpreters]: http://craftinginterpreters.com/
+[jlox]: https://github.com/munificent/craftinginterpreters/tree/master/java/com/craftinginterpreters
 [lox]: http://craftinginterpreters.com/the-lox-language.html
+[lox implementations]: https://github.com/munificent/craftinginterpreters/wiki/Lox-implementations
+[other lox implemantations]
