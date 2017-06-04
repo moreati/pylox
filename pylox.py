@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
 
 import sys
 
@@ -191,14 +191,15 @@ def error(line: int, message: str):
 def report(line: int, where: str, message: str):
     global had_error
 
-    print('[line %i] Error%s: %s' % (line, where, message), file=sys.stderr)
+    print(f'[line {line}] Error{where}: {message}', file=sys.stderr)
     had_error = True
 
 
 def main(argv: list):
     prog = argv.pop(0)
     if len(argv) > 1:
-        print("Usage: %s [script]" % prog, file=sys.stderr)
+        print(f"Usage: {prog} [script]", file=sys.stderr)
+        sys.exit(1)
     elif len(argv) == 1:
         run_file(argv[0])
     else:
