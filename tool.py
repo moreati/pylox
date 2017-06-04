@@ -11,7 +11,7 @@ def write_ast(output_dir: str, base_name: str, types: list):
 
 
 def define_ast(base_name: str, types: list):
-    yield 'from pylox import Token\n'
+    yield 'from tokens import Token\n'
 
     yield '\n\n'
     yield from define_visitor(base_name, types)

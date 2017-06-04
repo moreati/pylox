@@ -3,7 +3,7 @@
 import sys 
 
 from expr import *
-from pylox import Token, TokenType
+from tokens import Token, TokenType
 
 class AstPrinter:
     def print(self, expr: Expr):

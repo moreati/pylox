@@ -1,4 +1,4 @@
-from pylox import Token
+from tokens import Token
 
 
 class Visitor:
