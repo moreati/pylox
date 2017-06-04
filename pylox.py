@@ -4,7 +4,7 @@ import functools
 import sys
 
 from astprinter import AstPrinter
-from parser import Parser, ParseError
+from parser import Parser
 from tokens import Token, TokenType, TokenType as tt
 
 
