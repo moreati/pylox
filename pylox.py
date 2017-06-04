@@ -1,7 +1,10 @@
 #!/usr/bin/env python3.6
 
+import functools
 import sys
 
+from astprinter import AstPrinter
+from parser import Parser, ParseError
 from tokens import Token, TokenType, TokenType as tt
 
 
@@ -179,13 +182,27 @@ def run_prompt():
 def run(source: str):
     scanner = Scanner(source)
     tokens = scanner.scan_tokens()
+    parser = Parser(tokens)
+    expression = parser.parse()
 
-    for token in tokens:
-        print(token)
+    # Stop if there was a syntax error.
+    if had_error:
+        return
+
+    print(AstPrinter.print(expression))
 
 
+@functools.singledispatch
 def error(line: int, message: str):
     report(line, '', message)
+
+
+@error.register(Token)
+def _(token: Token, message: str):
+    if token.type == tt.EOF:
+        report(token.line, " at end", message)
+    else:
+        report(token.line, f" at '{token.lexeme}'", message)
 
 
 def report(line: int, where: str, message: str):
