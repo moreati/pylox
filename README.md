@@ -5,6 +5,8 @@ Pylox is incomplete and not intended to be useful, even as a reference.
 It is *learning in progress*. I'm merely translating Java snippets to Python
 3.x as I read through the book.
 
+### Differences to jlox
+
 ## Lox
 
 [Lox] is a high-level programming language created as a teaching aid.
@@ -23,4 +25,3 @@ Readers have also implmented various other [lox implementations].
 [jlox]: https://github.com/munificent/craftinginterpreters/tree/master/java/com/craftinginterpreters
 [lox]: http://craftinginterpreters.com/the-lox-language.html
 [lox implementations]: https://github.com/munificent/craftinginterpreters/wiki/Lox-implementations
-[other lox implemantations]
