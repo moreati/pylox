@@ -8,7 +8,13 @@ from parser import Parser
 from tokens import Token, TokenType, TokenType as tt
 
 
-had_error = False
+class ScanError(Exception):
+    def __init__(self, line: int, message: str):
+        self.line = line
+        self.message = message
+
+    def report(self):
+        return f'[line {self.line}] Error: {self.message}'
 
 
 class Scanner:
@@ -34,6 +40,7 @@ class Scanner:
     def __init__(self, source: str):
         self.source = source
         self.tokens = []
+        self.errors = []
 
         self.start = 0
         self.current = 0
@@ -86,7 +93,7 @@ class Scanner:
         elif self.is_digit(c): self.number()
         elif self.is_alpha(c): self.identifier()
         else:
-            error(self.line, 'Unexpected character.')
+            self.error('Unexpected character.')
 
     def number(self):
         while self.is_digit(self.peek()):
@@ -110,7 +117,7 @@ class Scanner:
 
         # Unterminated string.
         if self.is_at_end():
-            error(self.line, 'Unterminated string.')
+            self.error('Unterminated string.')
             return
 
         # The closing ".
@@ -167,11 +174,15 @@ class Scanner:
         text = self.source[self.start:self.current]
         self.tokens.append(Token(type, text, literal, self.line))
 
+    def error(self, message):
+        err = ScanError(self.line, message)
+        self.errors.append(err)
+
 
 def run_file(path: str):
     with open(path, encoding='utf-8') as file:
-        run(file.read())
-    if had_error:
+        errors = run(file.read())
+    if errors:
         sys.exit(65)
 
 def run_prompt():
@@ -185,31 +196,15 @@ def run(source: str):
     parser = Parser(tokens)
     expression = parser.parse()
 
+    errors = scanner.errors + parser.errors
+    for error in  errors:
+        print(error.report(), file=sys.stderr)
+
     # Stop if there was a syntax error.
-    if had_error:
-        return
+    if errors:
+        return errors
 
     print(AstPrinter.print(expression))
-
-
-@functools.singledispatch
-def error(line: int, message: str):
-    report(line, '', message)
-
-
-@error.register(Token)
-def _(token: Token, message: str):
-    if token.type == tt.EOF:
-        report(token.line, " at end", message)
-    else:
-        report(token.line, f" at '{token.lexeme}'", message)
-
-
-def report(line: int, where: str, message: str):
-    global had_error
-
-    print(f'[line {line}] Error{where}: {message}', file=sys.stderr)
-    had_error = True
 
 
 def main(argv: list):

@@ -1,12 +1,20 @@
 from typing import List
 
-from pylox import error
 from expr import *
 from tokens import Token, TokenType, TokenType as tt
 
 
 class ParseError(Exception):
-    pass
+    def __init__(self, token: Token, message: str):
+        self.token = token
+        self.message = message
+
+    def report(self):
+        if self.token.type == tt.EOF:
+            return f'[line {self.token.line}] Error at end: {self.message}'
+        else:
+            where = self.token.lexeme
+            return f"[line {self.token.line}] Error at '{where}': {self.message}"
 
 
 class Parser:
@@ -23,6 +31,7 @@ class Parser:
     """
     def __init__(self, tokens: List[Token]):
         self.tokens = tokens
+        self.errors = []
         self.current = 0
 
     def parse(self):
@@ -119,8 +128,9 @@ class Parser:
         return self.tokens[self.current - 1]
 
     def error(self, token: Token, message: str):
-        error(token, message)
-        return ParseError()
+        err = ParseError(token, message)
+        self.errors.append(err)
+        return err
 
     def synchronize(self):
         self.advance()
