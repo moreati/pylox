@@ -67,7 +67,7 @@ class Parser:
         return expr
 
     def unary(self):
-        if match(tt.BANG, tt.MINUS):
+        if self.match(tt.BANG, tt.MINUS):
             operator = self.previous()
             right = self.unary()
             return Unary(operator, right)
@@ -79,7 +79,7 @@ class Parser:
         elif self.match(tt.TRUE):   return Literal(True)
         elif self.match(tt.NIL):    return Literal(None)
         elif self.match(tt.NUMBER,
-                        tt.STRING): return Literal(self.previous.literal)
+                        tt.STRING): return Literal(self.previous().literal)
 
         elif self.match(tt.LEFT_PAREN):
             expr = self.expression()
@@ -109,7 +109,7 @@ class Parser:
             self.current += 1
         return self.previous()
 
-    def is_at_end(self)
+    def is_at_end(self):
         return self.peek() == tt.EOF
 
     def peek(self):
