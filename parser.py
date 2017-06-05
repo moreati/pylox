@@ -69,7 +69,7 @@ class Parser:
 
     def factor(self):
         expr = self.unary()
-        while self.match(tt.GREATER, tt.GREATER_EQUAL, tt.LESS, tt.LESS_EQUAL):
+        while self.match(tt.SLASH, tt.STAR):
             operator = self.previous()
             right = self.unary()
             expr = Binary(expr, operator, right)
