@@ -119,7 +119,7 @@ class Parser:
         return self.previous()
 
     def is_at_end(self):
-        return self.peek() == tt.EOF
+        return self.peek().type == tt.EOF
 
     def peek(self):
         return self.tokens[self.current]
