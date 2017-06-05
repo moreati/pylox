@@ -4,14 +4,15 @@ import os
 import sys
 
 
-def write_ast(output_dir: str, base_name: str, types: list):
+def write_ast(output_dir: str, base_name: str, imports: dict, types: list):
     path = os.path.join(output_dir, base_name.lower() + '.py')
     with open(path, 'w', encoding='utf-8') as f:
-        f.write(''.join(define_ast(base_name, types)))
+        f.write(''.join(define_ast(base_name, imports, types)))
 
 
-def define_ast(base_name: str, types: list):
-    yield 'from tokens import Token\n'
+def define_ast(base_name: str, imports: dict, types: list):
+    for module, members in imports.items():
+        yield f'from {module} import {members}\n'
 
     yield '\n\n'
     yield from define_visitor(base_name, types)
@@ -64,7 +65,7 @@ def main(argv):
 
     output_dir = argv[0]
 
-    write_ast(output_dir, 'Expr', [
+    write_ast(output_dir, 'Expr', {'tokens': 'Token'}, [
         'Binary   : left: Expr, operator: Token, right: Expr',
         'Grouping : expression: Expr',
         'Literal  : value',
