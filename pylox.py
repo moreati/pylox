@@ -3,7 +3,7 @@
 import functools
 import sys
 
-from astprinter import AstPrinter
+from interpreter import Interpreter
 from parser import Parser
 from tokens import Token, TokenType, TokenType as tt
 
@@ -181,9 +181,11 @@ class Scanner:
 
 def run_file(path: str):
     with open(path, encoding='utf-8') as file:
-        errors = run(file.read())
+        errors, runtime_errors = run(file.read())
     if errors:
         sys.exit(65)
+    if runtime_errors:
+        sys.exit(70)
 
 
 def run_prompt():
@@ -203,10 +205,15 @@ def run(source: str):
 
     # Stop if there was a syntax error.
     if errors:
-        return errors
+        return errors, []
 
-    print(AstPrinter().print(expression))
+    interpreter = Interpreter()
+    interpreter.interpret(expression)
 
+    runtime_errors = interpreter.errors
+    for error in runtime_errors:
+        print(error.report(), file=sys.stderr)
+    return errors, runtime_errors
 
 def main(argv: list):
     prog = argv.pop(0)
