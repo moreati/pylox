@@ -1,6 +1,7 @@
 from typing import List
 
 from expr import *
+from stmt import *
 from tokens import Token, TokenType, TokenType as tt
 
 
@@ -19,6 +20,14 @@ class ParseError(Exception):
 
 class Parser:
     """
+    program     = statement* EOF ;
+
+    statement   = exprStmt
+                | printStmt ;
+
+    exprStmt    = expression ";" ;
+    printStmt   = "print" expression ";" ;
+
     expression → equality
     equality   → comparison ( ( "!=" | "==" ) comparison )*
     comparison → term ( ( ">" | ">=" | "<" | "<=" ) term )*
@@ -35,13 +44,27 @@ class Parser:
         self.current = 0
 
     def parse(self):
-        try:
-            return self.expression()
-        except ParseError:
-            return None
+        statements = []
+        while not self.is_at_end():
+            statements.append(self.statement())
+        return statements
 
     def expression(self):
         return self.equality()
+
+    def statement(self):
+        if self.match(tt.PRINT): return self.printStatement()
+        return self.expressionStatement()
+
+    def printStatement(self):
+        value = self.expression()
+        self.consume(tt.SEMICOLON, "Expect ';' after value.")
+        return Print(value)
+
+    def expressionStatement(self):
+        expr = self.expression()
+        self.consume(tt.SEMICOLON, "Expect ';' after expression.")
+        return Expression(expr)
 
     def equality(self):
         expr = self.comparison()

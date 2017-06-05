@@ -197,7 +197,7 @@ def run(source: str):
     scanner = Scanner(source)
     tokens = scanner.scan_tokens()
     parser = Parser(tokens)
-    expression = parser.parse()
+    statements = parser.parse()
 
     errors = scanner.errors + parser.errors
     for error in  errors:
@@ -208,7 +208,7 @@ def run(source: str):
         return errors, []
 
     interpreter = Interpreter()
-    interpreter.interpret(expression)
+    interpreter.interpret(statements)
 
     runtime_errors = interpreter.errors
     for error in runtime_errors:

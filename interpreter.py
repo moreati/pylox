@@ -1,4 +1,5 @@
 from expr import *
+from stmt import *
 from tokens import Token, TokenType as tt
 
 
@@ -48,10 +49,10 @@ class Interpreter:
     def __init__(self):
         self.errors = []
 
-    def interpret(self, expression: Expr):
+    def interpret(self, statements: list):
         try:
-            value = self.evaluate(expression)
-            print(self.stringify(value))
+            for statement in statements:
+                self.execute(statement)
         except RuntimeError as error:
             self.errors.append(error)
 
@@ -112,6 +113,18 @@ class Interpreter:
 
     def evaluate(self, expr: Expr):
         return expr.accept(self)
+
+    def execute(self, stmt: Stmt):
+        stmt.accept(self)
+
+    def visitExpressionStmt(self, stmt: Expression):
+        self.evaluate(stmt.expression)
+        return None
+
+    def visitPrintStmt(self, stmt: Print):
+        value = self.evaluate(stmt.expression)
+        print(self.stringify(value))
+        return None
 
     def stringify(self, value):
         if value is None:
