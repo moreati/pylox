@@ -72,5 +72,9 @@ def main(argv):
         'Unary    : operator: Token, right: Expr',
     ])
 
+    write_ast(output_dir, 'Stmt', {'expr': 'Expr'}, [
+        'Expression : expression: Expr',
+        'Print      : expression: Expr',
+    ])
 if __name__ == '__main__':
     main(sys.argv)
