@@ -1,7 +1,7 @@
 from tokens import Token
 
 
-class Visitor:
+class ExprVisitor:
     def visitBinaryExpr(expr): raise NotImplementedError
     def visitGroupingExpr(expr): raise NotImplementedError
     def visitLiteralExpr(expr): raise NotImplementedError
@@ -9,7 +9,7 @@ class Visitor:
 
 
 class Expr:
-    def accept(visitor: Visitor):
+    def accept(visitor: ExprVisitor):
         raise NotImplementedError
 
 
@@ -19,7 +19,7 @@ class Binary(Expr):
         self.operator = operator
         self.right = right
 
-    def accept(self, visitor: Visitor):
+    def accept(self, visitor: ExprVisitor):
         return visitor.visitBinaryExpr(self)
 
 
@@ -27,7 +27,7 @@ class Grouping(Expr):
     def __init__(self, expression: Expr):
         self.expression = expression
 
-    def accept(self, visitor: Visitor):
+    def accept(self, visitor: ExprVisitor):
         return visitor.visitGroupingExpr(self)
 
 
@@ -35,7 +35,7 @@ class Literal(Expr):
     def __init__(self, value):
         self.value = value
 
-    def accept(self, visitor: Visitor):
+    def accept(self, visitor: ExprVisitor):
         return visitor.visitLiteralExpr(self)
 
 
@@ -44,5 +44,5 @@ class Unary(Expr):
         self.operator = operator
         self.right = right
 
-    def accept(self, visitor: Visitor):
+    def accept(self, visitor: ExprVisitor):
         return visitor.visitUnaryExpr(self)

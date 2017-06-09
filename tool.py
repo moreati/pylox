@@ -20,7 +20,7 @@ def define_ast(base_name: str, imports: dict, types: list):
     yield '\n\n'
     yield f'class {base_name}:\n'
     # The base accept() method.
-    yield '    def accept(visitor: Visitor):\n'
+    yield f'    def accept(visitor: {base_name}Visitor):\n'
     yield '        raise NotImplementedError\n'
 
     # The AST classes.
@@ -32,7 +32,7 @@ def define_ast(base_name: str, imports: dict, types: list):
 
 
 def define_visitor(base_name: str, types: list):
-    yield f'class Visitor:\n'
+    yield f'class {base_name}Visitor:\n'
 
     for type in types:
         type_name = type.split(':', maxsplit=1)[0].strip()
@@ -53,7 +53,7 @@ def define_type(base_name: str, class_name: str, fields_sig: str):
         yield f'        self.{name} = {name}\n'
 
     yield f'\n'
-    yield f'    def accept(self, visitor: Visitor):\n'
+    yield f'    def accept(self, visitor: {base_name}Visitor):\n'
     yield f'        return visitor.visit{class_name}{base_name}(self)\n'
 
 
