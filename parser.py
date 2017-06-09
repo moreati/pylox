@@ -20,8 +20,11 @@ class ParseError(Exception):
 
 class Parser:
     """
-    program     = statement* EOF ;
+    program     = declaration* eof ;
 
+    declaration = varDecl
+                | statement ;
+    varDecl     = "var" IDENTIFIER ( "=" expression )? ";" ;
     statement   = exprStmt
                 | printStmt ;
 
@@ -37,6 +40,7 @@ class Parser:
                | primary
     primary    → NUMBER | STRING | "false" | "true" | "nil"
                | "(" expression ")"
+               | IDENTIFIER ;
     """
     def __init__(self, tokens: List[Token]):
         self.tokens = tokens
@@ -46,11 +50,20 @@ class Parser:
     def parse(self):
         statements = []
         while not self.is_at_end():
-            statements.append(self.statement())
+            statements.append(self.declaration())
         return statements
 
     def expression(self):
         return self.equality()
+
+    def declaration(self):
+        try:
+            if self.match(tt.VAR):
+                return self.var_declaration();
+            return self.statement();
+        except ParseError:
+            self.synchronize()
+            return None
 
     def statement(self):
         if self.match(tt.PRINT): return self.printStatement()
@@ -60,6 +73,17 @@ class Parser:
         value = self.expression()
         self.consume(tt.SEMICOLON, "Expect ';' after value.")
         return Print(value)
+
+    def var_declaration(self):
+        name = self.consume(tt.IDENTIFIER, 'Expect variable name.')
+
+        if self.match(tt.EQUAL):
+            initializer = self.expression()
+        else:
+            initializer = None
+
+        self.consume(tt.SEMICOLON, "Expect ';' after variable declaration.")
+        return Var(name, initializer)
 
     def expressionStatement(self):
         expr = self.expression()
@@ -112,6 +136,9 @@ class Parser:
         elif self.match(tt.NIL):    return Literal(None)
         elif self.match(tt.NUMBER,
                         tt.STRING): return Literal(self.previous().literal)
+
+        elif self.match(tt.IDENTIFIER):
+            return Variable(self.previous())
 
         elif self.match(tt.LEFT_PAREN):
             expr = self.expression()

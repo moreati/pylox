@@ -79,11 +79,13 @@ def main(argv):
         'Grouping : expression: Expr',
         'Literal  : value',
         'Unary    : operator: Token, right: Expr',
+        'Variable : name: Token',
     ])
 
-    write_ast(output_dir, 'Stmt', {'expr': 'Expr'}, [
+    write_ast(output_dir, 'Stmt', {'tokens': 'Token', 'expr': 'Expr'}, [
         'Expression : expression: Expr',
         'Print      : expression: Expr',
+        'Var        : name: Token, initializer: Expr',
     ])
 if __name__ == '__main__':
     main(sys.argv)

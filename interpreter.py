@@ -45,8 +45,23 @@ def stringy(value):
     raise TypeError
 
 
+class Environment:
+    def __init__(self):
+        self.values = {}
+
+    def define(self, name: str, value):
+        self.values[name] = value
+
+    def get(self, name: Token):
+        try:
+            return self.values[name.lexeme]
+        except KeyError:
+            raise RuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+
+
 class Interpreter:
     def __init__(self):
+        self.environment = Environment()
         self.errors = []
 
     def interpret(self, statements: list):
@@ -72,6 +87,9 @@ class Interpreter:
 
         # Unreachable
         raise Exception('you dun goofed.')
+
+    def visitVariableExpr(self, expr: Variable):
+        return self.environment.get(expr.name)
 
     def vistGroupingExpr(self, expr: Grouping):
         return self.evaluate(expr)
@@ -125,6 +143,13 @@ class Interpreter:
         value = self.evaluate(stmt.expression)
         print(self.stringify(value))
         return None
+
+    def visitVarStmt(self, stmt: Var):
+        if stmt.initializer is not None:
+            value = self.evaluate(stmt.initializer)
+        else:
+            value = None
+        self.environment.define(stmt.name.lexeme, value)
 
     def stringify(self, value):
         if value is None:
