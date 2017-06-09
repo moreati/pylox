@@ -1,3 +1,5 @@
+from typing import List
+
 from expr import *
 from stmt import *
 from tokens import Token, TokenType as tt
@@ -46,7 +48,8 @@ def stringy(value):
 
 
 class Environment:
-    def __init__(self):
+    def __init__(self, enclosing=None):
+        self.enclosing = enclosing
         self.values = {}
 
     def define(self, name: str, value):
@@ -55,6 +58,8 @@ class Environment:
     def assign(self, name: Token, value):
         if name.lexeme in self.values:
             self.values[name] = value
+        elif self.enclosing is not None:
+            self.enclosing.assign(name, value)
         else:
             raise RuntimeError(name, f"Undefined variable '{name.lexeme}'.")
 
@@ -62,6 +67,8 @@ class Environment:
         try:
             return self.values[name.lexeme]
         except KeyError:
+            if self.enclosing is not None:
+                return self.enclosing.get(name)
             raise RuntimeError(name, f"Undefined variable '{name.lexeme}'.")
 
 
@@ -140,6 +147,18 @@ class Interpreter:
 
     def execute(self, stmt: Stmt):
         stmt.accept(self)
+
+    def executeBlock(self, statements: List[Stmt], environment: Environment):
+        previous = self.environment
+        try:
+            self.environment = environment
+            for statement in statements:
+                self.execute(statement)
+        finally:
+            self.environment = previous
+
+    def visitBlockStmt(self, stmt: Block):
+        self.executeBlock(stmt.statements, Environment(self.environment))
 
     def visitExpressionStmt(self, stmt: Expression):
         self.evaluate(stmt.expression)

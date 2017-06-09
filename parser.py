@@ -26,7 +26,9 @@ class Parser:
                 | statement ;
     varDecl     = "var" IDENTIFIER ( "=" expression )? ";" ;
     statement   = exprStmt
-                | printStmt ;
+                | printStmt
+                | block ;
+    block       = "{" declaration* "}" ;
 
     exprStmt    = expression ";" ;
     printStmt   = "print" expression ";" ;
@@ -69,6 +71,7 @@ class Parser:
 
     def statement(self):
         if self.match(tt.PRINT): return self.printStatement()
+        if self.match(tt.LEFT_BRACE): return Block(self.block())
         return self.expressionStatement()
 
     def printStatement(self):
@@ -91,6 +94,14 @@ class Parser:
         expr = self.expression()
         self.consume(tt.SEMICOLON, "Expect ';' after expression.")
         return Expression(expr)
+
+    def block(self):
+        statements = []
+        while not self.check(tt.RIGHT_BRACE) and not self.is_at_end():
+            statements.append(self.declaration())
+
+        self.consume(tt.RIGHT_BRACE, "Expect '}' after block.")
+        return statements
 
     def assignment(self):
         expr = self.equality()

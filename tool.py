@@ -83,7 +83,12 @@ def main(argv):
         'Variable : name: Token',
     ])
 
-    write_ast(output_dir, 'Stmt', {'tokens': 'Token', 'expr': 'Expr'}, [
+    write_ast(output_dir, 'Stmt', {
+        'typing'    : 'List',
+        'tokens'    : 'Token',
+        'expr'      : 'Expr',
+        }, [
+        'Block      : statements: List[Stmt]',
         'Expression : expression: Expr',
         'Print      : expression: Expr',
         'Var        : name: Token, initializer: Expr',

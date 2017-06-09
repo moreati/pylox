@@ -1,3 +1,4 @@
+from typing import List
 from tokens import Token
 from expr import Expr
 
@@ -5,6 +6,7 @@ from expr import Expr
 __all__ = [
     "StmtVisitor",
     "Stmt",
+    "Block",
     "Expression",
     "Print",
     "Var",
@@ -12,6 +14,7 @@ __all__ = [
 
 
 class StmtVisitor:
+    def visitBlockStmt(stmt): raise NotImplementedError
     def visitExpressionStmt(stmt): raise NotImplementedError
     def visitPrintStmt(stmt): raise NotImplementedError
     def visitVarStmt(stmt): raise NotImplementedError
@@ -20,6 +23,14 @@ class StmtVisitor:
 class Stmt:
     def accept(visitor: StmtVisitor):
         raise NotImplementedError
+
+
+class Block(Stmt):
+    def __init__(self, statements: List[Stmt]):
+        self.statements = statements
+
+    def accept(self, visitor: StmtVisitor):
+        return visitor.visitBlockStmt(self)
 
 
 class Expression(Stmt):
