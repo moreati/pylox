@@ -4,6 +4,7 @@ from tokens import Token
 __all__ = [
     "ExprVisitor",
     "Expr",
+    "Assign",
     "Binary",
     "Grouping",
     "Literal",
@@ -13,6 +14,7 @@ __all__ = [
 
 
 class ExprVisitor:
+    def visitAssignExpr(expr): raise NotImplementedError
     def visitBinaryExpr(expr): raise NotImplementedError
     def visitGroupingExpr(expr): raise NotImplementedError
     def visitLiteralExpr(expr): raise NotImplementedError
@@ -23,6 +25,15 @@ class ExprVisitor:
 class Expr:
     def accept(visitor: ExprVisitor):
         raise NotImplementedError
+
+
+class Assign(Expr):
+    def __init__(self, name: Token, value: Expr):
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor: ExprVisitor):
+        return visitor.visitAssignExpr(self)
 
 
 class Binary(Expr):

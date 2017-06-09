@@ -75,6 +75,7 @@ def main(argv):
     output_dir = argv[0]
 
     write_ast(output_dir, 'Expr', {'tokens': 'Token'}, [
+        'Assign   : name: Token, value: Expr',
         'Binary   : left: Expr, operator: Token, right: Expr',
         'Grouping : expression: Expr',
         'Literal  : value',

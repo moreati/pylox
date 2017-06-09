@@ -31,7 +31,9 @@ class Parser:
     exprStmt    = expression ";" ;
     printStmt   = "print" expression ";" ;
 
-    expression → equality
+    expression  = assignment ;
+    assignment  = identifier ( "=" assignment )?
+                | equality ;
     equality   → comparison ( ( "!=" | "==" ) comparison )*
     comparison → term ( ( ">" | ">=" | "<" | "<=" ) term )*
     term       → factor ( ( "-" | "+" ) factor )*
@@ -54,7 +56,7 @@ class Parser:
         return statements
 
     def expression(self):
-        return self.equality()
+        return self.assignment()
 
     def declaration(self):
         try:
@@ -89,6 +91,18 @@ class Parser:
         expr = self.expression()
         self.consume(tt.SEMICOLON, "Expect ';' after expression.")
         return Expression(expr)
+
+    def assignment(self):
+        expr = self.equality()
+        if self.match(tt.EQUAL):
+            equals = self.previous()
+            value = self.assignment()
+
+            if isinstance(expr, Variable):
+                name = expr.name
+                return Assign(name, value)
+            self.error(equals, 'Invalid assignment target.')
+        return expr
 
     def equality(self):
         expr = self.comparison()

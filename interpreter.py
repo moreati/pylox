@@ -52,6 +52,12 @@ class Environment:
     def define(self, name: str, value):
         self.values[name] = value
 
+    def assign(self, name: Token, value):
+        if name.lexeme in self.values:
+            self.values[name] = value
+        else:
+            raise RuntimeError(name, f"Undefined variable '{name.lexeme}'.")
+
     def get(self, name: Token):
         try:
             return self.values[name.lexeme]
@@ -150,6 +156,11 @@ class Interpreter:
         else:
             value = None
         self.environment.define(stmt.name.lexeme, value)
+
+    def visitAssignExpr(self, expr: Assign):
+        value = self.evaluate(expr.value)
+        self.environment.assign(expr.name, value)
+        return value
 
     def stringify(self, value):
         if value is None:
