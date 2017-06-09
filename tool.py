@@ -15,6 +15,15 @@ def define_ast(base_name: str, imports: dict, types: list):
         yield f'from {module} import {members}\n'
 
     yield '\n\n'
+    yield '__all__ = [\n'
+    yield f'    "{base_name}Visitor",\n'
+    yield f'    "{base_name}",\n'
+    for type in types:
+        class_name = type.split(':', maxsplit=1)[0].strip()
+        yield f'    "{class_name}",\n'
+    yield ']\n'
+
+    yield '\n\n'
     yield from define_visitor(base_name, types)
 
     yield '\n\n'
